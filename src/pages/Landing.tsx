@@ -15,10 +15,13 @@ import {
   Lock,
   Rocket,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const Landing = () => {
   const { openLoginModal } = useLoginModal();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -135,15 +138,29 @@ const Landing = () => {
             {/* Central Login Button */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
               <Button
-                onClick={() => openLoginModal()}
+                onClick={() => {
+                  if (user) navigate('/search');
+                  else openLoginModal();
+                }}
                 size="lg"
                 className="text-base px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all"
               >
                 Get Started Free
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              
-              
+
+              <Button
+                onClick={() => {
+                  if (user) navigate('/search');
+                  else openLoginModal();
+                }}
+                size="lg"
+                variant="outline"
+                className="text-base px-6 py-6 h-auto shadow-sm hover:shadow-md transition-all"
+              >
+                Explore Data
+                <Search className="ml-2 h-5 w-5" />
+              </Button>
             </div>
 
             {/* Stats */}
@@ -304,7 +321,10 @@ const Landing = () => {
               Start your free trial today—no credit card required.
             </p>
             <Button
-              onClick={() => openLoginModal()}
+              onClick={() => {
+                if (user) navigate('/search');
+                else openLoginModal();
+              }}
               size="lg"
               className="text-base px-10 py-6 h-auto shadow-lg hover:shadow-xl transition-all"
             >
