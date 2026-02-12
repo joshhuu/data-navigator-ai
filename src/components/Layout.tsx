@@ -1,7 +1,11 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Database, BarChart3, Search, Shield, Compass, GitCompare } from "lucide-react";
+import { Database, BarChart3, Search, Shield, Compass, GitCompare, ShoppingCart } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { UserAuthButton } from "@/components/UserAuthButton";
+import { useCart } from "@/hooks/useCart";
+import { CartDrawer } from "@/components/CartDrawer";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
 
 const navItems = [
   { to: "/search", label: "Discover", icon: Search },
@@ -13,6 +17,8 @@ const navItems = [
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { itemCount } = useCart();
+  const [cartOpen, setCartOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,6 +54,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+              title="Cart"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              {itemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-[10px]"
+                >
+                  {itemCount}
+                </Badge>
+              )}
+            </button>
             <ThemeToggle />
             <UserAuthButton />
           </nav>
@@ -68,6 +89,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2 rounded-md text-muted-foreground hover:text-foreground transition-colors"
+              title="Cart"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              {itemCount > 0 && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -top-1 -right-1 h-4 w-4 flex items-center justify-center p-0 text-[9px]"
+                >
+                  {itemCount}
+                </Badge>
+              )}
+            </button>
             <ThemeToggle />
             <UserAuthButton />
           </nav>
@@ -75,6 +111,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       <main>{children}</main>
+      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </div>
   );
 }

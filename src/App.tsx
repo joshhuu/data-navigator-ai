@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { Layout } from "@/components/Layout";
 import { LoginModalProvider } from "@/hooks/useLoginModal";
 import { LoginModal } from "@/components/LoginModal";
+import { CartProvider } from "@/hooks/useCart";
 import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import SearchResults from "./pages/SearchResults";
@@ -24,10 +25,11 @@ const App = () => (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
       <TooltipProvider>
         <LoginModalProvider>
-          <Toaster />
-          <Sonner />
-          <LoginModal />
-          <BrowserRouter>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
+            <LoginModal />
+            <BrowserRouter>
             <Routes>
               {/* Landing page without Layout */}
               <Route path="/" element={<Landing />} />
@@ -42,6 +44,7 @@ const App = () => (
               <Route path="*" element={<RequireAuth><Layout><NotFound /></Layout></RequireAuth>} />
             </Routes>
           </BrowserRouter>
+          </CartProvider>
         </LoginModalProvider>
       </TooltipProvider>
     </ThemeProvider>

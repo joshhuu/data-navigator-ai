@@ -4,9 +4,10 @@ import { formatNumber, generateConfidence } from "@/utils/aiSimulation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { BarChart3, ArrowRight } from "lucide-react";
+import { BarChart3, ArrowRight, ShoppingCart, Check } from "lucide-react";
 import { useMemo, useState } from "react";
 import { AnalyticsModal } from "./analytics/AnalyticsModal";
+import { useCart } from "@/hooks/useCart";
 
 interface DatasetCardProps {
   dataset: Dataset;
@@ -15,6 +16,8 @@ interface DatasetCardProps {
 export function DatasetCard({ dataset }: DatasetCardProps) {
   const confidence = useMemo(() => generateConfidence(), []);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const { addToCart, isInCart } = useCart();
+  const inCart = isInCart(dataset.id);
 
   return (
     <div className="surface-card rounded-lg p-5 hover-lift group">
@@ -79,9 +82,32 @@ export function DatasetCard({ dataset }: DatasetCardProps) {
       </div>
 
       <div className="flex gap-2">
-        <Link to={`/dataset/${dataset.id}`} className="flex-1">
-          <Button variant="outline" size="sm" className="w-full text-xs border-border hover:border-primary hover:text-primary">
-            View Details <ArrowRight className="ml-1 h-3 w-3" />
+        <Button
+          variant={inCart ? "secondary" : "default"}
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault();
+            if (!inCart) {
+              addToCart(dataset);
+            }
+          }}
+          disabled={inCart}
+          className="flex-1 text-xs gap-1.5"
+          title={inCart ? "Already in cart" : "Add to cart"}
+        >
+          {inCart ? (
+            <>
+              <Check className="h-3 w-3" /> In Cart
+            </>
+          ) : (
+            <>
+              <ShoppingCart className="h-3 w-3" /> Add
+            </>
+          )}
+        </Button>
+        <Link to={`/dataset/${dataset.id}`}>
+          <Button variant="outline" size="sm" className="text-xs border-border hover:border-primary hover:text-primary px-3">
+            <ArrowRight className="h-3 w-3" />
           </Button>
         </Link>
         <Button

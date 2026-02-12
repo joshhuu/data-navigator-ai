@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { datasets } from "@/data/datasets";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,9 +8,18 @@ import { GitCompare, BarChart3 } from "lucide-react";
 import { AnalyticsComparisonModal } from "@/components/analytics/AnalyticsComparisonModal";
 
 const Compare = () => {
+  const [searchParams] = useSearchParams();
   const [idA, setIdA] = useState<string>("");
   const [idB, setIdB] = useState<string>("");
   const [showAnalytics, setShowAnalytics] = useState(false);
+
+  // Load datasets from URL params if provided
+  useEffect(() => {
+    const paramA = searchParams.get("a");
+    const paramB = searchParams.get("b");
+    if (paramA) setIdA(paramA);
+    if (paramB) setIdB(paramB);
+  }, [searchParams]);
 
   const datasetA = datasets.find((d) => d.id === idA) || null;
   const datasetB = datasets.find((d) => d.id === idB) || null;
