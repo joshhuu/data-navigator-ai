@@ -2,11 +2,14 @@ import { useState } from "react";
 import { datasets } from "@/data/datasets";
 import { ComparisonTable } from "@/components/ComparisonTable";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { GitCompare } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { GitCompare, BarChart3 } from "lucide-react";
+import { AnalyticsComparisonModal } from "@/components/analytics/AnalyticsComparisonModal";
 
 const Compare = () => {
   const [idA, setIdA] = useState<string>("");
   const [idB, setIdB] = useState<string>("");
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   const datasetA = datasets.find((d) => d.id === idA) || null;
   const datasetB = datasets.find((d) => d.id === idB) || null;
@@ -54,7 +57,29 @@ const Compare = () => {
         </div>
       </div>
 
+      {datasetA && datasetB && (
+        <div className="flex justify-center mb-6">
+          <Button
+            onClick={() => setShowAnalytics(true)}
+            className="gap-2"
+            size="lg"
+          >
+            <BarChart3 className="h-4 w-4" />
+            View Analytics Comparison
+          </Button>
+        </div>
+      )}
+
       <ComparisonTable datasetA={datasetA} datasetB={datasetB} />
+
+      {datasetA && datasetB && (
+        <AnalyticsComparisonModal
+          open={showAnalytics}
+          onOpenChange={setShowAnalytics}
+          datasetA={datasetA}
+          datasetB={datasetB}
+        />
+      )}
     </div>
   );
 };
