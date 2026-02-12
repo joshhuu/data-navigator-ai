@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Database, BarChart3, Search, Shield, Compass, GitCompare } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navItems = [
   { to: "/", label: "Home", icon: Database },
@@ -42,6 +43,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            <ThemeToggle />
           </nav>
 
           {/* Mobile nav */}
@@ -60,6 +62,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            <ThemeToggle />
           </nav>
         </div>
       </header>

@@ -2,6 +2,12 @@ import { categories, industries, geographies } from "@/data/datasets";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { X } from "lucide-react";
 
 interface Filters {
@@ -28,8 +34,8 @@ export function FilterSidebar({ filters, onChange, onClose, className = "" }: Fi
   };
 
   return (
-    <div className={`surface-card rounded-lg p-4 space-y-6 ${className}`}>
-      <div className="flex items-center justify-between">
+    <div className={`surface-card rounded-lg p-4 ${className}`}>
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-foreground">Filters</h3>
         {onClose && (
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground lg:hidden">
@@ -38,77 +44,115 @@ export function FilterSidebar({ filters, onChange, onClose, className = "" }: Fi
         )}
       </div>
 
-      {/* Category */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Product Type</p>
-        <div className="space-y-1.5">
-          {categories.map((cat) => (
-            <label key={cat.id} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox
-                checked={filters.category.includes(cat.id)}
-                onCheckedChange={() => toggle("category", cat.id)}
-                className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-              />
-              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-                {cat.name}
+      <Accordion type="multiple" defaultValue={[]} className="w-full">
+        {/* Product Type */}
+        <AccordionItem value="product-type" className="border-border">
+          <AccordionTrigger className="text-xs font-medium text-foreground uppercase tracking-wider hover:no-underline py-3">
+            Product Type
+            {filters.category.length > 0 && (
+              <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                {filters.category.length}
               </span>
-            </label>
-          ))}
-        </div>
-      </div>
+            )}
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2 pt-2">
+              {categories.map((cat) => (
+                <label key={cat.id} className="flex items-center gap-2 cursor-pointer group">
+                  <Checkbox
+                    checked={filters.category.includes(cat.id)}
+                    onCheckedChange={() => toggle("category", cat.id)}
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                    {cat.name}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Industry */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Industry</p>
-        <div className="space-y-1.5">
-          {industries.slice(0, 6).map((ind) => (
-            <label key={ind} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox
-                checked={filters.industries.includes(ind)}
-                onCheckedChange={() => toggle("industries", ind)}
-                className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-              />
-              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-                {ind}
+        {/* Industry */}
+        <AccordionItem value="industry" className="border-border">
+          <AccordionTrigger className="text-xs font-medium text-foreground uppercase tracking-wider hover:no-underline py-3">
+            Industry
+            {filters.industries.length > 0 && (
+              <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                {filters.industries.length}
               </span>
-            </label>
-          ))}
-        </div>
-      </div>
+            )}
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2 pt-2">
+              {industries.map((ind) => (
+                <label key={ind} className="flex items-center gap-2 cursor-pointer group">
+                  <Checkbox
+                    checked={filters.industries.includes(ind)}
+                    onCheckedChange={() => toggle("industries", ind)}
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                    {ind}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Geography */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">Geography</p>
-        <div className="space-y-1.5">
-          {geographies.map((geo) => (
-            <label key={geo} className="flex items-center gap-2 cursor-pointer group">
-              <Checkbox
-                checked={filters.geography.includes(geo)}
-                onCheckedChange={() => toggle("geography", geo)}
-                className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-              />
-              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
-                {geo}
+        {/* Geography */}
+        <AccordionItem value="geography" className="border-border">
+          <AccordionTrigger className="text-xs font-medium text-foreground uppercase tracking-wider hover:no-underline py-3">
+            Geography
+            {filters.geography.length > 0 && (
+              <span className="ml-2 text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                {filters.geography.length}
               </span>
-            </label>
-          ))}
-        </div>
-      </div>
+            )}
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2 pt-2">
+              {geographies.map((geo) => (
+                <label key={geo} className="flex items-center gap-2 cursor-pointer group">
+                  <Checkbox
+                    checked={filters.geography.includes(geo)}
+                    onCheckedChange={() => toggle("geography", geo)}
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                    {geo}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Compliance */}
-      <div>
-        <p className="text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wider">
-          Min Compliance: {filters.compliance}%
-        </p>
-        <Slider
-          value={[filters.compliance]}
-          onValueChange={([v]) => onChange({ ...filters, compliance: v })}
-          min={0}
-          max={100}
-          step={5}
-          className="py-2"
-        />
-      </div>
+        {/* Compliance */}
+        <AccordionItem value="compliance" className="border-border">
+          <AccordionTrigger className="text-xs font-medium text-foreground uppercase tracking-wider hover:no-underline py-3">
+            Min Compliance: {filters.compliance}%
+          </AccordionTrigger>
+          <AccordionContent>
+            <div className="pt-4 pb-2">
+              <Slider
+                value={[filters.compliance]}
+                onValueChange={([v]) => onChange({ ...filters, compliance: v })}
+                min={0}
+                max={100}
+                step={5}
+                className="py-2"
+              />
+              <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
+                <span>0%</span>
+                <span>50%</span>
+                <span>100%</span>
+              </div>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 }
