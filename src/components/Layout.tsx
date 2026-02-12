@@ -18,11 +18,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="container flex items-center justify-between h-14 max-w-7xl mx-auto px-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-              <Database className="h-4 w-4 text-primary-foreground" />
-            </div>
+            <img src="/favicon.png" alt="DataNexus Logo" className="w-7 h-7 rounded-md" />
             <span className="font-bold text-foreground text-sm tracking-tight">
-              DataNexus<span className="text-primary">.ai</span>
+              Data Nexus<span className="text-primary"></span>
             </span>
           </Link>
 
