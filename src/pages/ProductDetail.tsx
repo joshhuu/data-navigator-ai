@@ -6,10 +6,13 @@ import { DatasetCard } from "@/components/DatasetCard";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Shield, Globe, Tag, DollarSign } from "lucide-react";
+import { useAnalytics } from "@/hooks/useAnalytics";
+import { AnalyticsPanel } from "@/components/analytics/AnalyticsPanel";
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dataset = datasets.find((d) => d.id === id);
+  const analytics = useAnalytics(datasets);
 
   if (!dataset) {
     return (
@@ -75,6 +78,7 @@ const ProductDetail = () => {
           <TabsTrigger value="volumes" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Volumes & Samples</TabsTrigger>
           <TabsTrigger value="sample" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Sample Data</TabsTrigger>
           <TabsTrigger value="dictionary" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Data Dictionary</TabsTrigger>
+          <TabsTrigger value="analytics" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Analytics</TabsTrigger>
           <TabsTrigger value="related" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Related</TabsTrigger>
         </TabsList>
 
@@ -147,6 +151,10 @@ const ProductDetail = () => {
               </div>
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="analytics">
+          <AnalyticsPanel analytics={analytics} />
         </TabsContent>
 
         <TabsContent value="related">

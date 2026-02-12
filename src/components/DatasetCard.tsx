@@ -5,7 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { BarChart3, ArrowRight } from "lucide-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { AnalyticsModal } from "./analytics/AnalyticsModal";
 
 interface DatasetCardProps {
   dataset: Dataset;
@@ -13,6 +14,7 @@ interface DatasetCardProps {
 
 export function DatasetCard({ dataset }: DatasetCardProps) {
   const confidence = useMemo(() => generateConfidence(), []);
+  const [showAnalytics, setShowAnalytics] = useState(false);
 
   return (
     <div className="surface-card rounded-lg p-5 hover-lift group">
@@ -76,11 +78,27 @@ export function DatasetCard({ dataset }: DatasetCardProps) {
         ))}
       </div>
 
-      <Link to={`/dataset/${dataset.id}`}>
-        <Button variant="outline" size="sm" className="w-full text-xs border-border hover:border-primary hover:text-primary">
-          View Details <ArrowRight className="ml-1 h-3 w-3" />
+      <div className="flex gap-2">
+        <Link to={`/dataset/${dataset.id}`} className="flex-1">
+          <Button variant="outline" size="sm" className="w-full text-xs border-border hover:border-primary hover:text-primary">
+            View Details <ArrowRight className="ml-1 h-3 w-3" />
+          </Button>
+        </Link>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.preventDefault();
+            setShowAnalytics(true);
+          }}
+          className="text-xs px-2"
+          title="View Analytics"
+        >
+          <BarChart3 className="h-4 w-4 text-primary" />
         </Button>
-      </Link>
+      </div>
+
+      <AnalyticsModal open={showAnalytics} onOpenChange={setShowAnalytics} />
     </div>
   );
 }
