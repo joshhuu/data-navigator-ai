@@ -1,9 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Database, BarChart3, Search, Shield, Compass, GitCompare } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserAuthButton } from "@/components/UserAuthButton";
 
 const navItems = [
-  { to: "/", label: "Home", icon: Database },
   { to: "/search", label: "Discover", icon: Search },
   { to: "/compare", label: "Compare", icon: GitCompare },
   { to: "/use-cases", label: "Use Cases", icon: Compass },
@@ -12,18 +12,23 @@ const navItems = [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="container flex items-center justify-between h-14 max-w-7xl mx-auto px-4">
-          <Link to="/" className="flex items-center gap-2">
+          <button
+            onClick={() => navigate(location.pathname)}
+            className="flex items-center gap-2 focus:outline-none"
+            aria-label="Data Nexus Logo"
+          >
             <img src="/favicon.png" alt="DataNexus Logo" className="w-7 h-7 rounded-md" />
             <span className="font-bold text-foreground text-sm tracking-tight">
               Data Nexus<span className="text-primary"></span>
             </span>
-          </Link>
+          </button>
 
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
@@ -44,6 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               );
             })}
             <ThemeToggle />
+            <UserAuthButton />
           </nav>
 
           {/* Mobile nav */}
@@ -63,6 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               );
             })}
             <ThemeToggle />
+            <UserAuthButton />
           </nav>
         </div>
       </header>
