@@ -1,5 +1,12 @@
-import { Shield, CheckCircle, Award, FileCheck, Lock } from "lucide-react";
+import { Shield, CheckCircle, Award, FileCheck, Lock, HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { complianceFAQ } from "@/data/complianceFaq";
 
 const badges = [
   {
@@ -100,6 +107,26 @@ const Compliance = () => {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="surface-card rounded-lg p-6 mt-8">
+        <div className="flex items-center gap-2 mb-6">
+          <HelpCircle className="h-5 w-5 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Frequently Asked Questions</h3>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          {complianceFAQ.map((faq, index) => (
+            <AccordionItem key={index} value={`item-${index}`}>
+              <AccordionTrigger className="text-left text-sm font-medium text-foreground hover:text-primary">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent className="text-xs text-muted-foreground leading-relaxed">
+                {faq.answer}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </div>
   );
