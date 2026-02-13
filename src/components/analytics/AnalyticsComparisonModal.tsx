@@ -19,6 +19,7 @@ interface AnalyticsComparisonModalProps {
   onOpenChange: (open: boolean) => void;
   datasetA: Dataset;
   datasetB: Dataset;
+  datasetC?: Dataset | null;
 }
 
 export function AnalyticsComparisonModal({
@@ -26,6 +27,7 @@ export function AnalyticsComparisonModal({
   onOpenChange,
   datasetA,
   datasetB,
+  datasetC,
 }: AnalyticsComparisonModalProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -46,7 +48,7 @@ export function AnalyticsComparisonModal({
             </div>
           }
         >
-          <AnalyticsComparisonPanel datasetA={datasetA} datasetB={datasetB} />
+          <AnalyticsComparisonPanel datasetA={datasetA} datasetB={datasetB} datasetC={datasetC} />
         </Suspense>
       </DialogContent>
     </Dialog>

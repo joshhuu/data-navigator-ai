@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { Search, Sparkles } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { Search, Sparkles, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -12,6 +12,11 @@ export function SearchBar({ large = false, defaultValue = "" }: SearchBarProps) 
   const [query, setQuery] = useState(defaultValue);
   const navigate = useNavigate();
 
+  // Update query when defaultValue changes (e.g., when URL changes)
+  useEffect(() => {
+    setQuery(defaultValue);
+  }, [defaultValue]);
+
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
@@ -21,6 +26,11 @@ export function SearchBar({ large = false, defaultValue = "" }: SearchBarProps) 
     },
     [query, navigate]
   );
+
+  const handleClear = useCallback(() => {
+    setQuery("");
+    navigate("/search");
+  }, [navigate]);
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
@@ -39,6 +49,18 @@ export function SearchBar({ large = false, defaultValue = "" }: SearchBarProps) 
             large ? "px-4 py-3 text-base" : "px-3 py-2 text-sm"
           }`}
         />
+        {query && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className={`text-muted-foreground hover:text-foreground transition-colors ${
+              large ? "mr-2" : "mr-1.5"
+            }`}
+            aria-label="Clear search"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
         <button
           type="submit"
           className={`flex items-center gap-1.5 bg-primary text-primary-foreground font-medium rounded-lg transition-all hover:opacity-90 ${

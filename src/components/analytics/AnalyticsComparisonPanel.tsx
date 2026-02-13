@@ -21,56 +21,82 @@ import { TrendingUp, BarChart3, Shield, Target } from "lucide-react";
 interface AnalyticsComparisonPanelProps {
   datasetA: Dataset;
   datasetB: Dataset;
+  datasetC?: Dataset | null;
 }
 
 const COLORS_A = ["hsl(174, 72%, 46%)", "hsl(174, 72%, 56%)", "hsl(174, 72%, 66%)"];
 const COLORS_B = ["hsl(199, 89%, 48%)", "hsl(199, 89%, 58%)", "hsl(199, 89%, 68%)"];
+const COLORS_C = ["hsl(280, 65%, 60%)", "hsl(280, 65%, 70%)", "hsl(280, 65%, 80%)"];
 
-export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsComparisonPanelProps) {
+export function AnalyticsComparisonPanel({ datasetA, datasetB, datasetC }: AnalyticsComparisonPanelProps) {
+  console.log('AnalyticsComparisonPanel - datasetC:', datasetC);
+  
   const analyticsA = useMemo(() => computeAnalytics([datasetA]), [datasetA]);
   const analyticsB = useMemo(() => computeAnalytics([datasetB]), [datasetB]);
+  const analyticsC = useMemo(() => datasetC ? computeAnalytics([datasetC]) : null, [datasetC]);
 
   // Merge industry data for side-by-side comparison
   const industryComparison = useMemo(() => {
     const allIndustries = new Set([
       ...analyticsA.industryDistribution.map((i) => i.industry),
       ...analyticsB.industryDistribution.map((i) => i.industry),
+      ...(analyticsC ? analyticsC.industryDistribution.map((i) => i.industry) : []),
     ]);
 
     return Array.from(allIndustries).map((industry) => {
       const aData = analyticsA.industryDistribution.find((i) => i.industry === industry);
       const bData = analyticsB.industryDistribution.find((i) => i.industry === industry);
-      return {
+      const cData = analyticsC ? analyticsC.industryDistribution.find((i) => i.industry === industry) : undefined;
+      
+      const result: any = {
         industry,
         datasetA: aData?.count || 0,
         datasetB: bData?.count || 0,
       };
+      
+      if (analyticsC) {
+        result.datasetC = cData?.count || 0;
+      }
+      
+      return result;
     }).slice(0, 8);
-  }, [analyticsA, analyticsB]);
+  }, [analyticsA, analyticsB, analyticsC]);
 
   // Merge geography data
   const geographyComparison = useMemo(() => {
     const allGeos = new Set([
       ...analyticsA.geographyDistribution.map((g) => g.geography),
       ...analyticsB.geographyDistribution.map((g) => g.geography),
+      ...(analyticsC ? analyticsC.geographyDistribution.map((g) => g.geography) : []),
     ]);
 
     return Array.from(allGeos).map((geography) => {
       const aData = analyticsA.geographyDistribution.find((g) => g.geography === geography);
       const bData = analyticsB.geographyDistribution.find((g) => g.geography === geography);
-      return {
+      const cData = analyticsC ? analyticsC.geographyDistribution.find((g) => g.geography === geography) : undefined;
+      
+      const result: any = {
         geography,
         datasetA: aData?.count || 0,
         datasetB: bData?.count || 0,
       };
+      
+      if (analyticsC) {
+        result.datasetC = cData?.count || 0;
+      }
+      
+      return result;
     });
-  }, [analyticsA, analyticsB]);
+  }, [analyticsA, analyticsB, analyticsC]);
 
   // Compliance comparison data
   const complianceData = [
     { name: datasetA.name.split(" ").slice(0, 2).join(" "), compliance: datasetA.complianceScore },
     { name: datasetB.name.split(" ").slice(0, 2).join(" "), compliance: datasetB.complianceScore },
   ];
+  if (datasetC) {
+    complianceData.push({ name: datasetC.name.split(" ").slice(0, 2).join(" "), compliance: datasetC.complianceScore });
+  }
 
   // Records & Accuracy comparison
   const recordsAccuracyData = [
@@ -87,11 +113,19 @@ export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsCompar
       recordsMil: Math.round(datasetB.records / 1000000),
     },
   ];
+  if (datasetC) {
+    recordsAccuracyData.push({
+      name: "Dataset C",
+      records: datasetC.records,
+      accuracy: datasetC.accuracy,
+      recordsMil: Math.round(datasetC.records / 1000000),
+    });
+  }
 
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className={`grid grid-cols-1 ${datasetC ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
         {/* Dataset A Summary */}
         <div className="surface-card rounded-lg p-4 border-l-4 border-primary">
           <h3 className="text-xs font-semibold text-primary mb-3">{datasetA.name}</h3>
@@ -151,6 +185,38 @@ export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsCompar
             </div>
           </div>
         </div>
+
+        {/* Dataset C Summary */}
+        {datasetC && (
+          <div className="surface-card rounded-lg p-4 border-l-4 border-[hsl(280,65%,60%)]">
+            <h3 className="text-xs font-semibold text-[hsl(280,65%,60%)] mb-3">{datasetC.name}</h3>
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <div className="flex items-center gap-1 mb-1">
+                  <Target className="h-3 w-3 text-[hsl(280,65%,60%)]" />
+                  <p className="text-[10px] text-muted-foreground uppercase">Records</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">
+                  {formatAnalyticsNumber(datasetC.records)}
+                </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-1 mb-1">
+                  <BarChart3 className="h-3 w-3 text-[hsl(280,65%,60%)]" />
+                  <p className="text-[10px] text-muted-foreground uppercase">Accuracy</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">{datasetC.accuracy}%</p>
+              </div>
+              <div>
+                <div className="flex items-center gap-1 mb-1">
+                  <Shield className="h-3 w-3 text-[hsl(280,65%,60%)]" />
+                  <p className="text-[10px] text-muted-foreground uppercase">Compliance</p>
+                </div>
+                <p className="text-lg font-bold text-foreground">{datasetC.complianceScore}%</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Charts Grid */}
@@ -180,6 +246,7 @@ export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsCompar
               <Legend wrapperStyle={{ fontSize: "11px" }} />
               <Bar dataKey="datasetA" fill="hsl(174, 72%, 46%)" name="Dataset A" radius={[4, 4, 0, 0]} />
               <Bar dataKey="datasetB" fill="hsl(199, 89%, 48%)" name="Dataset B" radius={[4, 4, 0, 0]} />
+              {datasetC && <Bar dataKey="datasetC" fill="hsl(280, 65%, 60%)" name="Dataset C" radius={[4, 4, 0, 0]} />}
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -209,6 +276,7 @@ export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsCompar
               <Legend wrapperStyle={{ fontSize: "11px" }} />
               <Bar dataKey="datasetA" fill="hsl(174, 72%, 46%)" name="Dataset A" radius={[4, 4, 0, 0]} />
               <Bar dataKey="datasetB" fill="hsl(199, 89%, 48%)" name="Dataset B" radius={[4, 4, 0, 0]} />
+              {datasetC && <Bar dataKey="datasetC" fill="hsl(280, 65%, 60%)" name="Dataset C" radius={[4, 4, 0, 0]} />}
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -274,6 +342,7 @@ export function AnalyticsComparisonPanel({ datasetA, datasetB }: AnalyticsCompar
               <Bar dataKey="compliance" radius={[0, 4, 4, 0]}>
                 <Cell fill="hsl(174, 72%, 46%)" />
                 <Cell fill="hsl(199, 89%, 48%)" />
+                {datasetC && <Cell fill="hsl(280, 65%, 60%)" />}
               </Bar>
             </BarChart>
           </ResponsiveContainer>

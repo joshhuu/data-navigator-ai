@@ -57,8 +57,12 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
   };
 
   const handleConfirmSelection = () => {
-    if (selectedIds.length === 2) {
-      navigate(`/compare?a=${selectedIds[0]}&b=${selectedIds[1]}`);
+    if (selectedIds.length >= 2 && selectedIds.length <= 3) {
+      let compareUrl = `/compare?a=${selectedIds[0]}&b=${selectedIds[1]}`;
+      if (selectedIds.length === 3) {
+        compareUrl += `&c=${selectedIds[2]}`;
+      }
+      navigate(compareUrl);
       onOpenChange(false);
       setShowSelectDialog(false);
       setSelectedIds([]);
@@ -70,7 +74,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
       if (prev.includes(id)) {
         return prev.filter(selectedId => selectedId !== id);
       }
-      if (prev.length < 2) {
+      if (prev.length < 3) {
         return [...prev, id];
       }
       return prev;
@@ -225,14 +229,14 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
               {itemCount === 1 ? (
                 <><AlertCircle className="h-5 w-5 text-yellow-500" /> Need More Datasets</>
               ) : (
-                <>Select 2 Datasets to Compare</>
+                <>Select 2-3 Datasets to Compare</>
               )}
             </DialogTitle>
             <DialogDescription>
               {itemCount === 1 ? (
                 "You need at least 2 datasets in your cart to compare. Add more datasets to continue."
               ) : (
-                `Select exactly 2 datasets from your ${itemCount} items to compare.`
+                `Select 2-3 datasets from your ${itemCount} items to compare.`
               )}
             </DialogDescription>
           </DialogHeader>
@@ -266,7 +270,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                       <Checkbox
                         checked={selectedIds.includes(item.dataset.id)}
                         onCheckedChange={() => toggleSelection(item.dataset.id)}
-                        disabled={!selectedIds.includes(item.dataset.id) && selectedIds.length >= 2}
+                        disabled={!selectedIds.includes(item.dataset.id) && selectedIds.length >= 3}
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-1">
@@ -290,7 +294,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
 
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
-                  {selectedIds.length} of 2 selected
+                  {selectedIds.length} of 3 selected
                 </p>
                 <div className="flex gap-2">
                   <Button
@@ -306,7 +310,7 @@ export function CartDrawer({ open, onOpenChange }: CartDrawerProps) {
                   <Button
                     size="sm"
                     onClick={handleConfirmSelection}
-                    disabled={selectedIds.length !== 2}
+                    disabled={selectedIds.length < 2 || selectedIds.length > 3}
                   >
                     Compare Selected
                   </Button>
